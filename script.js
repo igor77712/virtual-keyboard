@@ -220,10 +220,8 @@ const verificationOnSpecialKey = (arr) => {
 // }
 
 const clickVirtualButton = (e) => {
-    verificationOnSpecialKey( e.target.classList)
-    console.log(e.target === e.currentTarget)
+    console.log(e.target)
     if(!verificationOnSpecialKey(e.target.classList) && e.target != e.currentTarget) {
-        console.log(e.target === e.currentTarget)
         addTextInTextarea(e.target.innerHTML.trim());
     } else if(verificationOnSpecialKey(e.target.classList)){
         SpecialButtonFunc(Array.from(e.target.classList))
@@ -244,11 +242,14 @@ const SpecialButtonFunc = (arr) => {
         state.caps = !state.caps;
         renderKeys('CapsLock');
     }
-}
 
-const ShiftButtonFunc = (key) => {
-    state.shift = true;
-    renderKeys(key);
+    if(arr.includes('Tab')) {
+        TEXTAREA.value += `    `;
+    }
+
+    if(arr.includes('Enter')) {
+        TEXTAREA.value += "\n"
+    }
 }
 
 KEYBOARD.addEventListener('click', clickVirtualButton);
@@ -257,7 +258,8 @@ KEYBOARD.addEventListener('click', clickVirtualButton);
 
 const mouseDownSpecialVirtualButton = (e) => {
     if (Array.from(e.target.classList).includes("ShiftLeft") || Array.from(e.target.classList).includes("ShiftRight")){
-        ShiftButtonFunc ("ShiftLeft");
+        state.shift = true;
+        renderKeys ("ShiftLeft");
     }
 }
 
@@ -274,10 +276,8 @@ const mouseUpSpecialVirtualButton = (e) => {
 
 KEYBOARD.addEventListener('mouseup', mouseUpSpecialVirtualButton)
     // events key
-
 const keydownRealKeyboard = (e) => {
-    console.log('key pres e.code:', e.code);
-
+    console.log(e)
     //style
     TEXTAREA.focus();
     let down = document.querySelector('.'+e.code);
@@ -288,29 +288,42 @@ const keydownRealKeyboard = (e) => {
     let code = e.code;
     arr.push(code);
 
-    console.log('hi-hi', arr)
-
     if(!verificationOnSpecialKey(arr)) {
         addTextInTextarea(down.innerHTML.trim());
     } else if(verificationOnSpecialKey(arr)) {
-        SpecialButtonFunc(arr)
+        if(e.code === "ShiftLeft" || e.code === "ShiftRight"){
+            console.log('keyup', e.code)
+            console.log('state shift', state.shift)
+            state.shift = true;
+            renderKeys ("ShiftLeft");
+        } else {
+            SpecialButtonFunc(arr)
+        }
     }
     e.preventDefault();
     
 }
 
+
+
+
 const keyupRealKeyboard  = (e) => {
     TEXTAREA.focus();
     let up = document.querySelector('.'+e.code);
     up.classList.remove('key__down');
-}
 
-const keyPressRealKeyboard = (e) => {
-    if(e.shiftKey === true){
-        
+    let arr = [];
+    let code = e.code;
+    arr.push(code);
+
+    if(e.code === "ShiftLeft" || e.code === "ShiftRight"){
+        console.log('keyup', e.code)
+        console.log('state shift', state.shift)
+        state.shift = false;
+        renderKeys ("ShiftLeft");
     }
 }
 
-BODY.addEventListener('keyup', keyupRealKeyboard);
-BODY.addEventListener('keydown', keydownRealKeyboard);
-BODY.addEventListener('keypress', keyPressRealKeyboard);
+window.addEventListener('keyup', keyupRealKeyboard);
+window.addEventListener('keydown', keydownRealKeyboard);
+
