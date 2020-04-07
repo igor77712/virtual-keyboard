@@ -74,9 +74,28 @@ a[4]=[
     {className:"ArrowRight",eng:{caseDown:"►",caseUp:"►"},rus:{caseDown:"►",caseUp:"►"}},
     {className:"ControlRight",eng:{caseDown:"Ctrl",caseUp:"Ctrl"},rus:{caseDown:"Ctrl",caseUp:"Ctrl"}}];
 
+
 const specialKey=["Backspace","Tab","Enter","CapsLock","ShiftLeft","ShiftRight","AltLeft","AltRight","ControlLeft","ControlRight","MetaLeft","Delete", "Space"];
+const engAlphabet=[
+    "KeyQ", "KeyW", "KeyE", "KeyR", "KeyT", "KeyY", "KeyU", "KeyI", "KeyO", "KeyP", 
+    "KeyA", "KeyS", "KeyD","KeyF","KeyG","KeyH","KeyJ","KeyK","KeyL",
+    "KeyZ", "KeyX", "KeyC", "KeyV", "KeyB", "KeyN", "KeyM",
+];
 
+const rusAlphabet=[
+    "Backquote", 
+    "KeyQ", "KeyW", "KeyE", "KeyR", "KeyT", "KeyY", "KeyU", "KeyI", "KeyO", "KeyP", "BracketLeft", "BracketRight",
+    "KeyA", "KeyS", "KeyD","KeyF","KeyG","KeyH","KeyJ","KeyK","KeyL", "Semicolon", "Quote",
+    "KeyZ", "KeyX", "KeyC", "KeyV", "KeyB", "KeyN", "KeyM", "Comma", "Period",
+];
 
+// STATE
+
+let state = {
+    lang: 'eng',
+    caps: false,
+    shift: false,
+}
     
 
 const BODY =  document.body;
@@ -92,22 +111,24 @@ BODY.append(WRAPPER);
 const KEYBOARD = document.querySelector('#keyboard');
 const TEXTAREA = document.querySelector('textarea');
 
-const drawKey = (key, type) => {
+// Draw Keyboard
+
+const drawKey = (key, type, lang) => {
     return `
         <button class="${type} ${key.className} key">
-            ${key.eng.caseDown}
+            ${key[lang].caseDown}
         </button>
    `;
 }
 
 const drawSpecialKey = (key) => {
     if(["Backspace","Enter","CapsLock","ShiftLeft", "ShiftRight"].includes(key.className)) {
-        KEYBOARD.insertAdjacentHTML("beforeend", drawKey(key, 'key__special-double'));
+        KEYBOARD.insertAdjacentHTML("beforeend", drawKey(key, 'key__special-double', state.lang));
     } else {
         if(key.className === 'Space'){
-            KEYBOARD.insertAdjacentHTML("beforeend", drawKey(key, 'key__special-space'));
+            KEYBOARD.insertAdjacentHTML("beforeend", drawKey(key, 'key__special-space', state.lang));
         } else {
-            KEYBOARD.insertAdjacentHTML("beforeend", drawKey(key, 'key__special-simple'));
+            KEYBOARD.insertAdjacentHTML("beforeend", drawKey(key, 'key__special-simple', state.lang));
         }
     }
     
@@ -119,7 +140,7 @@ const drawKeyboard = (keys) => {
             if(specialKey.includes(key.className)){
                 drawSpecialKey(key);
             } else {
-                KEYBOARD.insertAdjacentHTML("beforeend", drawKey(key, 'key__simple'));
+                KEYBOARD.insertAdjacentHTML("beforeend", drawKey(key, 'key__simple', state.lang));
             }
             
         }
@@ -128,61 +149,168 @@ const drawKeyboard = (keys) => {
 
 drawKeyboard(a);
 
+// render keys
+
+function renderKeys (key) {
+    if(key === 'CapsLock'){
+        
+        for (let i=0; i < a.length; i++){
+            for(let j=0; j < a[i].length; j++){
+                if(state.lang === 'eng'){
+                    if(engAlphabet.includes(a[i][j].className)){
+                        let btn = document.querySelector('.'+a[i][j].className);
+                        btn.innerHTML = a[i][j][state.lang][state.caps ? 'caseUp': 'caseDown'];
+                }} else if(rusAlphabet.includes(a[i][j].className)){
+                    let btn = document.querySelector('.'+a[i][j].className);
+                    btn.innerHTML = a[i][j][state.lang][state.caps ? 'caseUp': 'caseDown'];
+                }
+                
+            }
+        }
+    }
+
+    if(key === 'ShiftLeft' || key === 'ShiftRight') {
+        // console.log('state.shift: ', state.shift)
+        if(state.caps === false){
+            for (let i=0; i < a.length; i++){
+                for(let j=0; j < a[i].length; j++){
+                        let btn = document.querySelector('.'+a[i][j].className);
+                        btn.innerHTML = a[i][j][state.lang][state.shift ? 'caseUp': 'caseDown'];
+                }
+            }
+        } else {
+            for (let i=0; i < a.length; i++){
+                for(let j=0; j < a[i].length; j++){
+                    if(state.lang === 'eng' && !engAlphabet.includes(a[i][j].className)){
+                        let btn = document.querySelector('.'+a[i][j].className);
+                        btn.innerHTML = a[i][j][state.lang][state.shift ? 'caseUp': 'caseDown'];
+                    } else if(!rusAlphabet.includes(a[i][j].className)){
+                        let btn = document.querySelector('.'+a[i][j].className);
+                        btn.innerHTML = a[i][j][state.lang][state.shift ? 'caseUp': 'caseDown'];
+                    }
+                    
+                }
+            }
+        }
+    }
+}
+
 // Events
-const keyDownSpecialKey = (e) => {
-    console.log(e.target)
-    if (Array.from(e.target.classList).includes('Space')){
+
+    // events mouse click
+
+const addTextInTextarea = (e) => {
+    TEXTAREA.value += e;
+    TEXTAREA.focus();
+}
+
+const verificationOnSpecialKey = (arr) => {
+    // console.log(specialKey.includes(arr[1]))
+    for(let i=0;i<arr.length; i++){
+        if(specialKey.includes(arr[i])){
+            return true
+        }
+    } 
+
+    return false
+}
+
+// const specialButton = (key) => {
+
+// }
+
+const clickVirtualButton = (e) => {
+    verificationOnSpecialKey( e.target.classList)
+    console.log(e.target === e.currentTarget)
+    if(!verificationOnSpecialKey(e.target.classList) && e.target != e.currentTarget) {
+        console.log(e.target === e.currentTarget)
+        addTextInTextarea(e.target.innerHTML.trim());
+    } else if(verificationOnSpecialKey(e.target.classList)){
+        SpecialButtonFunc(Array.from(e.target.classList))
+        TEXTAREA.focus();
+    }
+}
+
+const SpecialButtonFunc = (arr) => {
+    if (arr.includes('Space')){
         TEXTAREA.value += " ";
     }
 
-    if (Array.from(e.target.classList).includes('Backspace')) {
+    if (arr.includes('Backspace')) {
         TEXTAREA.value = TEXTAREA.value.slice(0, -1);
     }
-}
 
-const clickButtonMouse = (e) => {
-    if(
-        e.target.className != e.currentTarget.className && 
-        !Array.from(e.target.classList).includes('key__special-double') && 
-        !Array.from(e.target.classList).includes('key__special-simple') && 
-        !Array.from(e.target.classList).includes('key__special-space')) {
-
-        TEXTAREA.value += e.target.innerHTML.trim();
-        TEXTAREA.focus();
-    } else {
-        keyDownSpecialKey(e)
-        TEXTAREA.focus();
+    if (arr.includes('CapsLock')) {
+        state.caps = !state.caps;
+        renderKeys('CapsLock');
     }
 }
 
-const keyDownA4 = (e) => {
+const ShiftButtonFunc = (key) => {
+    state.shift = true;
+    renderKeys(key);
+}
+
+KEYBOARD.addEventListener('click', clickVirtualButton);
+
+    // events mouse down
+
+const mouseDownSpecialVirtualButton = (e) => {
+    if (Array.from(e.target.classList).includes("ShiftLeft") || Array.from(e.target.classList).includes("ShiftRight")){
+        ShiftButtonFunc ("ShiftLeft");
+    }
+}
+
+KEYBOARD.addEventListener('mousedown', mouseDownSpecialVirtualButton)
+
+    // events mouse up
+
+const mouseUpSpecialVirtualButton = (e) => {
+    if (Array.from(e.target.classList).includes("ShiftLeft") || Array.from(e.target.classList).includes("ShiftRight")){
+        state.shift = false;
+        renderKeys ("ShiftLeft");
+    }
+}
+
+KEYBOARD.addEventListener('mouseup', mouseUpSpecialVirtualButton)
+    // events key
+
+const keydownRealKeyboard = (e) => {
+    console.log('key pres e.code:', e.code);
+
+    //style
     TEXTAREA.focus();
     let down = document.querySelector('.'+e.code);
     down.classList.add('key__down');
+
+    //add symbol
+    let arr = [];
+    let code = e.code;
+    arr.push(code);
+
+    console.log('hi-hi', arr)
+
+    if(!verificationOnSpecialKey(arr)) {
+        addTextInTextarea(down.innerHTML.trim());
+    } else if(verificationOnSpecialKey(arr)) {
+        SpecialButtonFunc(arr)
+    }
+    e.preventDefault();
+    
 }
 
-const keyUpA4 = (e) => {
+const keyupRealKeyboard  = (e) => {
     TEXTAREA.focus();
     let up = document.querySelector('.'+e.code);
     up.classList.remove('key__down');
 }
 
-KEYBOARD.addEventListener('click', clickButtonMouse);
-BODY.addEventListener('keyup', keyUpA4);
-BODY.addEventListener('keydown', keyDownA4);
+const keyPressRealKeyboard = (e) => {
+    if(e.shiftKey === true){
+        
+    }
+}
 
-// const test = (e) => {
-//     // console.log('e.target: ', e.target)
-//     // console.log('e.target.classList: ',  e.target.classList)
-//     // console.log('textarea.value', TEXTAREA.value)
-// }
-
-// KEYBOARD.addEventListener('click', test);
-
-// const testKeyPress = (e) => {
-//     console.log(e)
-//     console.log('e.code: ', e.code)
-//     console.log('e.key: ', e.key)
-// }
-
-// BODY.addEventListener('keydown', testKeyPress);
+BODY.addEventListener('keyup', keyupRealKeyboard);
+BODY.addEventListener('keydown', keydownRealKeyboard);
+BODY.addEventListener('keypress', keyPressRealKeyboard);
