@@ -40,6 +40,10 @@
   margin: 50px auto;
 }
 
+.instructions {
+  margin: 50px auto;
+}
+
 .keyboard {
   display: flex;
   justify-content: space-around;

@@ -65,7 +65,7 @@ a[3]=[
     
 a[4]=[
     {className:"ControlLeft",eng:{caseDown:"Ctrl",caseUp:"Ctrl"},rus:{caseDown:"Ctrl",caseUp:"Ctrl"}},
-    {className:"MetaLeft",eng:{caseDown:"Win",caseUp:"Win"},rus:{caseDown:"Win",caseUp:"Win"}},
+    {className:"MetaLeft",eng:{caseDown:"Menu",caseUp:"Menu"},rus:{caseDown:"Menu",caseUp:"Menu"}},
     {className:"AltLeft",eng:{caseDown:"Alt",caseUp:"Alt"},rus:{caseDown:"Alt",caseUp:"Alt"}},
     {className:"Space",eng:{caseDown:" ",caseUp:" "},rus:{caseDown:" ",caseUp:" "}},
     {className:"AltRight",eng:{caseDown:"Alt",caseUp:"Alt"},rus:{caseDown:"Alt",caseUp:"Alt"}},
@@ -92,11 +92,15 @@ const rusAlphabet=[
 // STATE
 
 let state = {
-    lang: 'eng',
+    lang: localStorage.getItem('lang') || 'eng',
     caps: false,
     shift: false,
 }
-    
+
+window.addEventListener('unload', () => {
+    localStorage.setItem('lang', state.lang)
+})
+
 
 const BODY =  document.body;
 const WRAPPER = document.createElement('div');
@@ -105,6 +109,11 @@ WRAPPER.setAttribute('class', 'wrapper');
 WRAPPER.innerHTML = `
         <textarea name="text" id="text" class="textarea-keyboard" cols="100" rows="10" autofocus></textarea>
         <div class="keyboard" id="keyboard"></div>
+        <div class="instructions">
+            <p> Клавиатура создана в операционной системе Linux Mint 19.3 Tricia </p>
+            <p> Для переключения языка комбинация: левыe ctrl + alt </p>
+        </div>
+
 `
 BODY.append(WRAPPER);
 
@@ -152,8 +161,16 @@ drawKeyboard(a);
 // render keys
 
 function renderKeys (key) {
+    if(key === 'changeLang'){
+        for (let i=0; i < a.length; i++){
+            for(let j=0; j < a[i].length; j++){
+                        let btn = document.querySelector('.'+a[i][j].className);
+                        btn.innerHTML = a[i][j][state.lang][state.caps ? 'caseUp': 'caseDown']; 
+            }
+        }
+    }
+
     if(key === 'CapsLock'){
-        
         for (let i=0; i < a.length; i++){
             for(let j=0; j < a[i].length; j++){
                 if(state.lang === 'eng'){
@@ -170,7 +187,6 @@ function renderKeys (key) {
     }
 
     if(key === 'ShiftLeft' || key === 'ShiftRight') {
-        // console.log('state.shift: ', state.shift)
         if(state.caps === false){
             for (let i=0; i < a.length; i++){
                 for(let j=0; j < a[i].length; j++){
@@ -201,7 +217,7 @@ function renderKeys (key) {
 
 const addTextInTextarea = (e) => {
     TEXTAREA.value += e;
-    TEXTAREA.focus();
+    // TEXTAREA.focus();
 }
 
 const verificationOnSpecialKey = (arr) => {
@@ -224,8 +240,8 @@ const clickVirtualButton = (e) => {
     if(!verificationOnSpecialKey(e.target.classList) && e.target != e.currentTarget) {
         addTextInTextarea(e.target.innerHTML.trim());
     } else if(verificationOnSpecialKey(e.target.classList)){
-        SpecialButtonFunc(Array.from(e.target.classList))
-        TEXTAREA.focus();
+        SpecialButtonFunc(Array.from(e.target.classList));
+        // TEXTAREA.focus();
     }
 }
 
@@ -263,7 +279,7 @@ const mouseDownSpecialVirtualButton = (e) => {
     }
 }
 
-KEYBOARD.addEventListener('mousedown', mouseDownSpecialVirtualButton)
+KEYBOARD.addEventListener('mousedown', mouseDownSpecialVirtualButton);
 
     // events mouse up
 
@@ -274,16 +290,14 @@ const mouseUpSpecialVirtualButton = (e) => {
     }
 }
 
-KEYBOARD.addEventListener('mouseup', mouseUpSpecialVirtualButton)
+KEYBOARD.addEventListener('mouseup', mouseUpSpecialVirtualButton);
+
     // events key
+
 const keydownRealKeyboard = (e) => {
-    console.log(e)
-    //style
-    TEXTAREA.focus();
     let down = document.querySelector('.'+e.code);
     down.classList.add('key__down');
 
-    //add symbol
     let arr = [];
     let code = e.code;
     arr.push(code);
@@ -292,12 +306,10 @@ const keydownRealKeyboard = (e) => {
         addTextInTextarea(down.innerHTML.trim());
     } else if(verificationOnSpecialKey(arr)) {
         if(e.code === "ShiftLeft" || e.code === "ShiftRight"){
-            console.log('keyup', e.code)
-            console.log('state shift', state.shift)
             state.shift = true;
             renderKeys ("ShiftLeft");
         } else {
-            SpecialButtonFunc(arr)
+            SpecialButtonFunc(arr);
         }
     }
     e.preventDefault();
@@ -308,7 +320,6 @@ const keydownRealKeyboard = (e) => {
 
 
 const keyupRealKeyboard  = (e) => {
-    TEXTAREA.focus();
     let up = document.querySelector('.'+e.code);
     up.classList.remove('key__down');
 
@@ -317,8 +328,6 @@ const keyupRealKeyboard  = (e) => {
     arr.push(code);
 
     if(e.code === "ShiftLeft" || e.code === "ShiftRight"){
-        console.log('keyup', e.code)
-        console.log('state shift', state.shift)
         state.shift = false;
         renderKeys ("ShiftLeft");
     }
@@ -327,3 +336,19 @@ const keyupRealKeyboard  = (e) => {
 window.addEventListener('keyup', keyupRealKeyboard);
 window.addEventListener('keydown', keydownRealKeyboard);
 
+const keyPressed = new Set();
+
+const keydownLang = (e) => {
+    keyPressed.add(e.code);
+    if(keyPressed.has("ControlLeft") && keyPressed.has("AltLeft")){
+        state.lang = (state.lang === 'eng' ? 'rus': 'eng');
+        renderKeys('changeLang');
+    }
+}
+
+const keyupLang = (e) => {
+    keyPressed.delete(e.code)
+}
+
+window.addEventListener('keyup', keyupLang);
+window.addEventListener('keydown', keydownLang);
