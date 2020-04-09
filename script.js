@@ -89,8 +89,6 @@ const rusAlphabet=[
     "KeyZ", "KeyX", "KeyC", "KeyV", "KeyB", "KeyN", "KeyM", "Comma", "Period",
 ];
 
-// STATE
-
 let state = {
     lang: localStorage.getItem('lang') || 'eng',
     caps: false,
@@ -119,8 +117,6 @@ BODY.append(WRAPPER);
 
 const KEYBOARD = document.querySelector('#keyboard');
 const TEXTAREA = document.querySelector('textarea');
-
-// Draw Keyboard
 
 const drawKey = (key, type, lang) => {
     return `
@@ -157,8 +153,6 @@ const drawKeyboard = (keys) => {
 } 
 
 drawKeyboard(a);
-
-// render keys
 
 function renderKeys (key) {
     if(key === 'changeLang'){
@@ -211,37 +205,24 @@ function renderKeys (key) {
     }
 }
 
-// Events
-
-    // events mouse click
-
 const addTextInTextarea = (e) => {
     TEXTAREA.value += e;
-    // TEXTAREA.focus();
 }
 
 const verificationOnSpecialKey = (arr) => {
-    // console.log(specialKey.includes(arr[1]))
     for(let i=0;i<arr.length; i++){
         if(specialKey.includes(arr[i])){
             return true
         }
     } 
-
     return false
 }
 
-// const specialButton = (key) => {
-
-// }
-
 const clickVirtualButton = (e) => {
-    console.log(e.target)
     if(!verificationOnSpecialKey(e.target.classList) && e.target != e.currentTarget) {
         addTextInTextarea(e.target.innerHTML.trim());
     } else if(verificationOnSpecialKey(e.target.classList)){
         SpecialButtonFunc(Array.from(e.target.classList));
-        // TEXTAREA.focus();
     }
 }
 
@@ -270,8 +251,6 @@ const SpecialButtonFunc = (arr) => {
 
 KEYBOARD.addEventListener('click', clickVirtualButton);
 
-    // events mouse down
-
 const mouseDownSpecialVirtualButton = (e) => {
     if (Array.from(e.target.classList).includes("ShiftLeft") || Array.from(e.target.classList).includes("ShiftRight")){
         state.shift = true;
@@ -281,8 +260,6 @@ const mouseDownSpecialVirtualButton = (e) => {
 
 KEYBOARD.addEventListener('mousedown', mouseDownSpecialVirtualButton);
 
-    // events mouse up
-
 const mouseUpSpecialVirtualButton = (e) => {
     if (Array.from(e.target.classList).includes("ShiftLeft") || Array.from(e.target.classList).includes("ShiftRight")){
         state.shift = false;
@@ -291,8 +268,6 @@ const mouseUpSpecialVirtualButton = (e) => {
 }
 
 KEYBOARD.addEventListener('mouseup', mouseUpSpecialVirtualButton);
-
-    // events key
 
 const keydownRealKeyboard = (e) => {
     let down = document.querySelector('.'+e.code);
