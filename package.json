@@ -10,7 +10,6 @@
     "eslint-plugin-import": "^2.20.2"
   },
   "scripts": {
-    "linter": "npx eslint script.js",
     "style": "sass --watch sass/style.scss sass/style.css",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
