@@ -1,6 +1,6 @@
-const a = [];
+const arrayKeys = [];
 
-a[0] = [
+arrayKeys[0] = [
   { className: 'Backquote', eng: { caseDown: '`', caseUp: '~' }, rus: { caseDown: 'ё', caseUp: 'Ё' } },
   { className: 'Digit1', eng: { caseDown: '1', caseUp: '!' }, rus: { caseDown: '1', caseUp: '!' } },
   { className: 'Digit2', eng: { caseDown: '2', caseUp: '@' }, rus: { caseDown: '2', caseUp: '"' } },
@@ -16,7 +16,7 @@ a[0] = [
   { className: 'Equal', eng: { caseDown: '=', caseUp: '+' }, rus: { caseDown: '=', caseUp: '+' } },
   { className: 'Backspace', eng: { caseDown: 'Backspace', caseUp: 'Backspace' }, rus: { caseDown: 'Backspace', caseUp: 'Backspace' } }];
 
-a[1] = [
+arrayKeys[1] = [
   { className: 'Tab', eng: { caseDown: 'Tab', caseUp: 'Tab' }, rus: { caseDown: 'Tab', caseUp: 'Tab' } },
   { className: 'KeyQ', eng: { caseDown: 'q', caseUp: 'Q' }, rus: { caseDown: 'й', caseUp: 'Й' } },
   { className: 'KeyW', eng: { caseDown: 'w', caseUp: 'W' }, rus: { caseDown: 'ц', caseUp: 'Ц' } },
@@ -33,7 +33,7 @@ a[1] = [
   { className: 'Backslash', eng: { caseDown: '\\', caseUp: '|' }, rus: { caseDown: '\\', caseUp: '/' } },
   { className: 'Delete', eng: { caseDown: 'Del', caseUp: 'Del' }, rus: { caseDown: 'Del', caseUp: 'Del' } }];
 
-a[2] = [
+arrayKeys[2] = [
   { className: 'CapsLock', eng: { caseDown: 'CapsLock', caseUp: 'CapsLock' }, rus: { caseDown: 'CapsLock', caseUp: 'CapsLock' } },
   { className: 'KeyA', eng: { caseDown: 'a', caseUp: 'A' }, rus: { caseDown: 'ф', caseUp: 'Ф' } },
   { className: 'KeyS', eng: { caseDown: 's', caseUp: 'S' }, rus: { caseDown: 'ы', caseUp: 'Ы' } },
@@ -48,7 +48,7 @@ a[2] = [
   { className: 'Quote', eng: { caseDown: "'", caseUp: '"' }, rus: { caseDown: 'э', caseUp: 'Э' } },
   { className: 'Enter', eng: { caseDown: 'Enter', caseUp: 'Enter' }, rus: { caseDown: 'Enter', caseUp: 'Enter' } }];
 
-a[3] = [
+arrayKeys[3] = [
   { className: 'ShiftLeft', eng: { caseDown: 'Shift', caseUp: 'Shift' }, rus: { caseDown: 'Shift', caseUp: 'Shift' } },
   { className: 'KeyZ', eng: { caseDown: 'z', caseUp: 'Z' }, rus: { caseDown: 'я', caseUp: 'Я' } },
   { className: 'KeyX', eng: { caseDown: 'x', caseUp: 'X' }, rus: { caseDown: 'ч', caseUp: 'Ч' } },
@@ -63,7 +63,7 @@ a[3] = [
   { className: 'ArrowUp', eng: { caseDown: '▲', caseUp: '▲' }, rus: { caseDown: '▲', caseUp: '▲' } },
   { className: 'ShiftRight', eng: { caseDown: 'Shift', caseUp: 'Shift' }, rus: { caseDown: 'Shift', caseUp: 'Shift' } }];
 
-a[4] = [
+arrayKeys[4] = [
   { className: 'ControlLeft', eng: { caseDown: 'Ctrl', caseUp: 'Ctrl' }, rus: { caseDown: 'Ctrl', caseUp: 'Ctrl' } },
   { className: 'MetaLeft', eng: { caseDown: 'Menu', caseUp: 'Menu' }, rus: { caseDown: 'Menu', caseUp: 'Menu' } },
   { className: 'AltLeft', eng: { caseDown: 'Alt', caseUp: 'Alt' }, rus: { caseDown: 'Alt', caseUp: 'Alt' } },
@@ -147,29 +147,29 @@ const drawKeyboard = (keys) => {
   }
 };
 
-drawKeyboard(a);
+drawKeyboard(arrayKeys);
 
 function renderKeys(key) {
   if (key === 'changeLang') {
-    for (let i = 0; i < a.length; i += 1) {
-      for (let j = 0; j < a[i].length; j += 1) {
-        const btn = BODY.querySelector(`.${a[i][j].className}`);
-        btn.innerHTML = a[i][j][state.lang][state.caps ? 'caseUp' : 'caseDown'];
+    for (let i = 0; i < arrayKeys.length; i += 1) {
+      for (let j = 0; j < arrayKeys[i].length; j += 1) {
+        const btn = BODY.querySelector(`.${arrayKeys[i][j].className}`);
+        btn.innerHTML = arrayKeys[i][j][state.lang][state.caps ? 'caseUp' : 'caseDown'];
       }
     }
   }
 
   if (key === 'CapsLock') {
-    for (let i = 0; i < a.length; i += 1) {
-      for (let j = 0; j < a[i].length; j += 1) {
+    for (let i = 0; i < arrayKeys.length; i += 1) {
+      for (let j = 0; j < arrayKeys[i].length; j += 1) {
         if (state.lang === 'eng') {
-          if (engAlphabet.includes(a[i][j].className)) {
-            const btn = BODY.querySelector(`.${a[i][j].className}`);
-            btn.innerHTML = a[i][j][state.lang][state.caps ? 'caseUp' : 'caseDown'];
+          if (engAlphabet.includes(arrayKeys[i][j].className)) {
+            const btn = BODY.querySelector(`.${arrayKeys[i][j].className}`);
+            btn.innerHTML = arrayKeys[i][j][state.lang][state.caps ? 'caseUp' : 'caseDown'];
           }
-        } else if (rusAlphabet.includes(a[i][j].className)) {
-          const btn = BODY.querySelector(`.${a[i][j].className}`);
-          btn.innerHTML = a[i][j][state.lang][state.caps ? 'caseUp' : 'caseDown'];
+        } else if (rusAlphabet.includes(arrayKeys[i][j].className)) {
+          const btn = BODY.querySelector(`.${arrayKeys[i][j].className}`);
+          btn.innerHTML = arrayKeys[i][j][state.lang][state.caps ? 'caseUp' : 'caseDown'];
         }
       }
     }
@@ -177,21 +177,21 @@ function renderKeys(key) {
 
   if (key === 'ShiftLeft' || key === 'ShiftRight') {
     if (state.caps === false) {
-      for (let i = 0; i < a.length; i += 1) {
-        for (let j = 0; j < a[i].length; j += 1) {
-          const btn = BODY.querySelector(`.${a[i][j].className}`);
-          btn.innerHTML = a[i][j][state.lang][state.shift ? 'caseUp' : 'caseDown'];
+      for (let i = 0; i < arrayKeys.length; i += 1) {
+        for (let j = 0; j < arrayKeys[i].length; j += 1) {
+          const btn = BODY.querySelector(`.${arrayKeys[i][j].className}`);
+          btn.innerHTML = arrayKeys[i][j][state.lang][state.shift ? 'caseUp' : 'caseDown'];
         }
       }
     } else {
-      for (let i = 0; i < a.length; i += 1) {
-        for (let j = 0; j < a[i].length; j += 1) {
-          if (state.lang === 'eng' && !engAlphabet.includes(a[i][j].className)) {
-            const btn = BODY.querySelector(`.${a[i][j].className}`);
-            btn.innerHTML = a[i][j][state.lang][state.shift ? 'caseUp' : 'caseDown'];
-          } else if (!rusAlphabet.includes(a[i][j].className)) {
-            const btn = BODY.querySelector(`.${a[i][j].className}`);
-            btn.innerHTML = a[i][j][state.lang][state.shift ? 'caseUp' : 'caseDown'];
+      for (let i = 0; i < arrayKeys.length; i += 1) {
+        for (let j = 0; j < arrayKeys[i].length; j += 1) {
+          if (state.lang === 'eng' && !engAlphabet.includes(arrayKeys[i][j].className)) {
+            const btn = BODY.querySelector(`.${arrayKeys[i][j].className}`);
+            btn.innerHTML = arrayKeys[i][j][state.lang][state.shift ? 'caseUp' : 'caseDown'];
+          } else if (!rusAlphabet.includes(arrayKeys[i][j].className)) {
+            const btn = BODY.querySelector(`.${arrayKeys[i][j].className}`);
+            btn.innerHTML = arrayKeys[i][j][state.lang][state.shift ? 'caseUp' : 'caseDown'];
           }
         }
       }
