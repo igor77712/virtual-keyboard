@@ -14,33 +14,24 @@
   padding: 0;
   cursor: pointer;
 }
-
-.key:active, .key__down {
+.key_simple {
+  width: 60px;
+}
+.key_special-double {
+  width: 128px;
+}
+.key_special-simple {
+  width: 60px;
+}
+.key_special-space {
+  width: 463px;
+}
+.key:active, .key_down {
   background-color: #f8f8f8;
   color: #316875;
 }
 
-.key__simple {
-  width: 60px;
-}
-
-.key__special-double {
-  width: 128px;
-}
-
-.key__special-simple {
-  width: 60px;
-}
-
-.key__special-space {
-  width: 463px;
-}
-
 .textarea-keyboard {
-  margin: 50px auto;
-}
-
-.instructions {
   margin: 50px auto;
 }
 
@@ -50,6 +41,10 @@
   flex-wrap: wrap;
   border: solid #00b4e0 4px;
   background-color: black;
+}
+
+.instructions {
+  margin: 50px auto;
 }
 
 .wrapper {

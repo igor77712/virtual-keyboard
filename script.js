@@ -127,11 +127,11 @@ const drawKey = (key, type, lang) => `
 
 const drawSpecialKey = (key) => {
   if (['Backspace', 'Enter', 'CapsLock', 'ShiftLeft', 'ShiftRight'].includes(key.className)) {
-    KEYBOARD.insertAdjacentHTML('beforeend', drawKey(key, 'key__special-double', state.lang));
+    KEYBOARD.insertAdjacentHTML('beforeend', drawKey(key, 'key_special-double', state.lang));
   } else if (key.className === 'Space') {
-    KEYBOARD.insertAdjacentHTML('beforeend', drawKey(key, 'key__special-space', state.lang));
+    KEYBOARD.insertAdjacentHTML('beforeend', drawKey(key, 'key_special-space', state.lang));
   } else {
-    KEYBOARD.insertAdjacentHTML('beforeend', drawKey(key, 'key__special-simple', state.lang));
+    KEYBOARD.insertAdjacentHTML('beforeend', drawKey(key, 'key_special-simple', state.lang));
   }
 };
 
@@ -141,7 +141,7 @@ const drawKeyboard = (keys) => {
       if (specialKey.includes(keys[i][j].className)) {
         drawSpecialKey(keys[i][j]);
       } else {
-        KEYBOARD.insertAdjacentHTML('beforeend', drawKey(keys[i][j], 'key__simple', state.lang));
+        KEYBOARD.insertAdjacentHTML('beforeend', drawKey(keys[i][j], 'key_simple', state.lang));
       }
     }
   }
@@ -265,7 +265,7 @@ KEYBOARD.addEventListener('mouseup', mouseUpSpecialVirtualButton);
 
 const keydownRealKeyboard = (e) => {
   const down = BODY.querySelector(`.${e.code}`);
-  down.classList.add('key__down');
+  down.classList.add('key_down');
 
   const arr = [];
   const { code } = e;
@@ -287,7 +287,7 @@ const keydownRealKeyboard = (e) => {
 
 const keyupRealKeyboard = (e) => {
   const up = BODY.querySelector(`.${e.code}`);
-  up.classList.remove('key__down');
+  up.classList.remove('key_down');
 
   const arr = [];
   const { code } = e;
