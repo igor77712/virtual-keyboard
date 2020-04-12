@@ -75,7 +75,10 @@ arrayKeys[4] = [
   { className: 'ControlRight', eng: { caseDown: 'Ctrl', caseUp: 'Ctrl' }, rus: { caseDown: 'Ctrl', caseUp: 'Ctrl' } }];
 
 
-const specialKey = ['Backspace', 'Tab', 'Enter', 'CapsLock', 'ShiftLeft', 'ShiftRight', 'AltLeft', 'AltRight', 'ControlLeft', 'ControlRight', 'MetaLeft', 'Delete', 'Space'];
+const specialKey = [
+  'Backspace', 'Tab', 'Enter', 'CapsLock', 'ShiftLeft', 'ShiftRight', 'AltLeft',
+  'AltRight', 'ControlLeft', 'ControlRight', 'MetaLeft', 'Delete', 'Space',
+];
 const engAlphabet = [
   'KeyQ', 'KeyW', 'KeyE', 'KeyR', 'KeyT', 'KeyY', 'KeyU', 'KeyI', 'KeyO', 'KeyP',
   'KeyA', 'KeyS', 'KeyD', 'KeyF', 'KeyG', 'KeyH', 'KeyJ', 'KeyK', 'KeyL',
@@ -149,7 +152,7 @@ const drawKeyboard = (keys) => {
 
 drawKeyboard(arrayKeys);
 
-function renderKeys(key) {
+function updateKeyboardLayout(key) {
   if (key === 'changeLang') {
     for (let i = 0; i < arrayKeys.length; i += 1) {
       for (let j = 0; j < arrayKeys[i].length; j += 1) {
@@ -223,7 +226,7 @@ const SpecialButtonFunc = (arr) => {
 
   if (arr.includes('CapsLock')) {
     state.caps = !state.caps;
-    renderKeys('CapsLock');
+    updateKeyboardLayout('CapsLock');
   }
 
   if (arr.includes('Tab')) {
@@ -248,7 +251,7 @@ KEYBOARD.addEventListener('click', clickVirtualButton);
 const mouseDownSpecialVirtualButton = (e) => {
   if (Array.from(e.target.classList).includes('ShiftLeft') || Array.from(e.target.classList).includes('ShiftRight')) {
     state.shift = true;
-    renderKeys('ShiftLeft');
+    updateKeyboardLayout('ShiftLeft');
   }
 };
 
@@ -257,7 +260,7 @@ KEYBOARD.addEventListener('mousedown', mouseDownSpecialVirtualButton);
 const mouseUpSpecialVirtualButton = (e) => {
   if (Array.from(e.target.classList).includes('ShiftLeft') || Array.from(e.target.classList).includes('ShiftRight')) {
     state.shift = false;
-    renderKeys('ShiftLeft');
+    updateKeyboardLayout('ShiftLeft');
   }
 };
 
@@ -276,7 +279,7 @@ const keydownRealKeyboard = (e) => {
   } else {
     if (e.code === 'ShiftLeft' || e.code === 'ShiftRight') {
       state.shift = true;
-      renderKeys('ShiftLeft');
+      updateKeyboardLayout('ShiftLeft');
     } else {
       SpecialButtonFunc(arr);
     }
@@ -295,7 +298,7 @@ const keyupRealKeyboard = (e) => {
 
   if (e.code === 'ShiftLeft' || e.code === 'ShiftRight') {
     state.shift = false;
-    renderKeys('ShiftLeft');
+    updateKeyboardLayout('ShiftLeft');
   }
 };
 
@@ -308,7 +311,7 @@ const keydownLang = (e) => {
   keyPressed.add(e.code);
   if (keyPressed.has('ControlLeft') && keyPressed.has('AltLeft')) {
     state.lang = (state.lang === 'eng' ? 'rus' : 'eng');
-    renderKeys('changeLang');
+    updateKeyboardLayout('changeLang');
   }
 };
 
