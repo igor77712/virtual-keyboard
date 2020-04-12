@@ -238,7 +238,7 @@ const SpecialButtonFunc = (arr) => {
 const clickVirtualButton = (e) => {
   if (!verificationOnSpecialKey(e.target.classList) && e.target !== e.currentTarget) {
     addTextInTextarea(e.target.innerHTML.trim());
-  } else if (verificationOnSpecialKey(e.target.classList)) {
+  } else {
     SpecialButtonFunc(Array.from(e.target.classList));
   }
 };
@@ -273,15 +273,15 @@ const keydownRealKeyboard = (e) => {
 
   if (!verificationOnSpecialKey(arr)) {
     addTextInTextarea(down.innerHTML.trim());
-  } else if (verificationOnSpecialKey(arr)) {
+  } else {
     if (e.code === 'ShiftLeft' || e.code === 'ShiftRight') {
       state.shift = true;
       renderKeys('ShiftLeft');
     } else {
       SpecialButtonFunc(arr);
     }
+    e.preventDefault();
   }
-  e.preventDefault();
 };
 
 
