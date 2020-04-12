@@ -79,18 +79,20 @@ const specialKey = [
   'Backspace', 'Tab', 'Enter', 'CapsLock', 'ShiftLeft', 'ShiftRight', 'AltLeft',
   'AltRight', 'ControlLeft', 'ControlRight', 'MetaLeft', 'Delete', 'Space',
 ];
-const engAlphabet = [
-  'KeyQ', 'KeyW', 'KeyE', 'KeyR', 'KeyT', 'KeyY', 'KeyU', 'KeyI', 'KeyO', 'KeyP',
-  'KeyA', 'KeyS', 'KeyD', 'KeyF', 'KeyG', 'KeyH', 'KeyJ', 'KeyK', 'KeyL',
-  'KeyZ', 'KeyX', 'KeyC', 'KeyV', 'KeyB', 'KeyN', 'KeyM',
-];
 
-const rusAlphabet = [
-  'Backquote',
-  'KeyQ', 'KeyW', 'KeyE', 'KeyR', 'KeyT', 'KeyY', 'KeyU', 'KeyI', 'KeyO', 'KeyP', 'BracketLeft', 'BracketRight',
-  'KeyA', 'KeyS', 'KeyD', 'KeyF', 'KeyG', 'KeyH', 'KeyJ', 'KeyK', 'KeyL', 'Semicolon', 'Quote',
-  'KeyZ', 'KeyX', 'KeyC', 'KeyV', 'KeyB', 'KeyN', 'KeyM', 'Comma', 'Period',
-];
+// const engAlphabet = [
+//   'KeyQ', 'KeyW', 'KeyE', 'KeyR', 'KeyT', 'KeyY', 'KeyU', 'KeyI', 'KeyO', 'KeyP',
+//   'KeyA', 'KeyS', 'KeyD', 'KeyF', 'KeyG', 'KeyH', 'KeyJ', 'KeyK', 'KeyL',
+//   'KeyZ', 'KeyX', 'KeyC', 'KeyV', 'KeyB', 'KeyN', 'KeyM',
+// ];
+
+// const rusAlphabet = [
+//   'Backquote',
+//   'KeyQ', 'KeyW', 'KeyE', 'KeyR', 'KeyT', 'KeyY', 'KeyU', 'KeyI', 'KeyO',
+//    'KeyP', 'BracketLeft', 'BracketRight',
+//   'KeyA', 'KeyS', 'KeyD', 'KeyF', 'KeyG', 'KeyH', 'KeyJ', 'KeyK', 'KeyL', 'Semicolon', 'Quote',
+//   'KeyZ', 'KeyX', 'KeyC', 'KeyV', 'KeyB', 'KeyN', 'KeyM', 'Comma', 'Period',
+// ];
 
 const state = {
   lang: localStorage.getItem('lang') || 'eng',
@@ -152,52 +154,11 @@ const drawKeyboard = (keys) => {
 
 drawKeyboard(arrayKeys);
 
-function updateKeyboardLayout(key) {
-  if (key === 'changeLang') {
-    for (let i = 0; i < arrayKeys.length; i += 1) {
-      for (let j = 0; j < arrayKeys[i].length; j += 1) {
-        const btn = BODY.querySelector(`.${arrayKeys[i][j].className}`);
-        btn.innerHTML = arrayKeys[i][j][state.lang][state.caps ? 'caseUp' : 'caseDown'];
-      }
-    }
-  }
-
-  if (key === 'CapsLock') {
-    for (let i = 0; i < arrayKeys.length; i += 1) {
-      for (let j = 0; j < arrayKeys[i].length; j += 1) {
-        if (state.lang === 'eng') {
-          if (engAlphabet.includes(arrayKeys[i][j].className)) {
-            const btn = BODY.querySelector(`.${arrayKeys[i][j].className}`);
-            btn.innerHTML = arrayKeys[i][j][state.lang][state.caps ? 'caseUp' : 'caseDown'];
-          }
-        } else if (rusAlphabet.includes(arrayKeys[i][j].className)) {
-          const btn = BODY.querySelector(`.${arrayKeys[i][j].className}`);
-          btn.innerHTML = arrayKeys[i][j][state.lang][state.caps ? 'caseUp' : 'caseDown'];
-        }
-      }
-    }
-  }
-
-  if (key === 'ShiftLeft' || key === 'ShiftRight') {
-    if (state.caps === false) {
-      for (let i = 0; i < arrayKeys.length; i += 1) {
-        for (let j = 0; j < arrayKeys[i].length; j += 1) {
-          const btn = BODY.querySelector(`.${arrayKeys[i][j].className}`);
-          btn.innerHTML = arrayKeys[i][j][state.lang][state.shift ? 'caseUp' : 'caseDown'];
-        }
-      }
-    } else {
-      for (let i = 0; i < arrayKeys.length; i += 1) {
-        for (let j = 0; j < arrayKeys[i].length; j += 1) {
-          if (state.lang === 'eng' && !engAlphabet.includes(arrayKeys[i][j].className)) {
-            const btn = BODY.querySelector(`.${arrayKeys[i][j].className}`);
-            btn.innerHTML = arrayKeys[i][j][state.lang][state.shift ? 'caseUp' : 'caseDown'];
-          } else if (!rusAlphabet.includes(arrayKeys[i][j].className)) {
-            const btn = BODY.querySelector(`.${arrayKeys[i][j].className}`);
-            btn.innerHTML = arrayKeys[i][j][state.lang][state.shift ? 'caseUp' : 'caseDown'];
-          }
-        }
-      }
+function updateKeyboardLayout() {
+  for (let i = 0; i < arrayKeys.length; i += 1) {
+    for (let j = 0; j < arrayKeys[i].length; j += 1) {
+      const btn = BODY.querySelector(`.${arrayKeys[i][j].className}`);
+      btn.innerHTML = arrayKeys[i][j][state.lang][!(state.caps || state.shift) ? 'caseUp' : 'caseDown'];
     }
   }
 }
@@ -215,7 +176,7 @@ const verificationOnSpecialKey = (arr) => {
   return false;
 };
 
-const SpecialButtonFunc = (arr) => {
+const specialButtonFunc = (arr) => {
   if (arr.includes('Space')) {
     TEXTAREA.value += ' ';
   }
@@ -242,7 +203,7 @@ const clickVirtualButton = (e) => {
   if (!verificationOnSpecialKey(e.target.classList) && e.target !== e.currentTarget) {
     addTextInTextarea(e.target.innerHTML.trim());
   } else {
-    SpecialButtonFunc(Array.from(e.target.classList));
+    specialButtonFunc(Array.from(e.target.classList));
   }
 };
 
@@ -281,7 +242,7 @@ const keydownRealKeyboard = (e) => {
       state.shift = true;
       updateKeyboardLayout('ShiftLeft');
     } else {
-      SpecialButtonFunc(arr);
+      specialButtonFunc(arr);
     }
     e.preventDefault();
   }
