@@ -185,8 +185,21 @@ function updateKeyboardLayout() {
   }
 }
 
+const formatText = (text) => {
+  const positionStart = TEXTAREA.selectionStart;
+  const positionEnd = TEXTAREA.selectionEnd;
+
+  const beforeAdd = TEXTAREA.value.slice(0, positionStart);
+  const add = text;
+  const afterAdd = TEXTAREA.value.slice(positionEnd);
+
+  TEXTAREA.value = beforeAdd + add + afterAdd;
+  TEXTAREA.selectionStart = (beforeAdd + add).length;
+  TEXTAREA.selectionEnd = (beforeAdd + add).length;
+};
+
 const addTextInTextarea = (e) => {
-  TEXTAREA.value += e;
+  formatText(e);
 };
 
 const verificationOnSpecialKey = (arr) => {
@@ -200,11 +213,35 @@ const verificationOnSpecialKey = (arr) => {
 
 const specialButtonDown = (arr) => {
   if (arr.includes('Space')) {
-    TEXTAREA.value += ' ';
+    formatText(' ');
   }
 
   if (arr.includes('Backspace')) {
-    TEXTAREA.value = TEXTAREA.value.slice(0, -1);
+    const positionStart = TEXTAREA.selectionStart;
+    const positionEnd = TEXTAREA.selectionEnd;
+    if (positionStart > 0) {
+      TEXTAREA.value = `${TEXTAREA.value.slice(0, positionStart - 1)}${TEXTAREA.value.slice(positionEnd)}`;
+      TEXTAREA.selectionStart = positionStart - 1;
+      TEXTAREA.selectionEnd = positionEnd - 1;
+    } else {
+      TEXTAREA.value = `${TEXTAREA.value.slice(positionEnd)}`;
+      TEXTAREA.selectionStart = 0;
+      TEXTAREA.selectionEnd = 0;
+    }
+  }
+
+  if (arr.includes('Delete')) {
+    const positionStart = TEXTAREA.selectionStart;
+    const positionEnd = TEXTAREA.selectionEnd;
+    if (positionStart === 0) {
+      TEXTAREA.value = `${TEXTAREA.value.slice(positionEnd + 1)}`;
+      TEXTAREA.selectionStart = positionStart;
+      TEXTAREA.selectionEnd = positionStart;
+    } else {
+      TEXTAREA.value = `${TEXTAREA.value.slice(0, positionStart)}${TEXTAREA.value.slice(positionEnd + 1)}`;
+      TEXTAREA.selectionStart = positionStart;
+      TEXTAREA.selectionEnd = positionEnd;
+    }
   }
 
   if (arr.includes('CapsLock')) {
@@ -215,11 +252,11 @@ const specialButtonDown = (arr) => {
   }
 
   if (arr.includes('Tab')) {
-    TEXTAREA.value += '\t';
+    formatText('\t');
   }
 
   if (arr.includes('Enter')) {
-    TEXTAREA.value += '\n';
+    formatText('\n');
   }
   if (arr.includes('ShiftLeft')) {
     const down = BODY.querySelector('.ShiftLeft');
@@ -278,6 +315,7 @@ const keyDown = (e) => {
     e.preventDefault();
     addTextInTextarea(translatorClassKey(e));
   } else {
+    e.preventDefault();
     specialButtonDown(arrayClass);
   }
 };
